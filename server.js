@@ -45,7 +45,7 @@ io.on('connection',socket => {
     socket.on('disconnect',()=>{
         console.log(username + " isdisconnected");
         connectedUser.splice(connectedUser.indexOf(username));
-        delete map[username];
+        map.delete(username);
         updateUsername()
     })
     
@@ -66,11 +66,10 @@ io.on('connection',socket => {
         if (!to || to === '') {
            return;
         }
-        map.get(to).emit('chat message',{
+        map.has(to) && map.get(to).emit('chat message',{
             name: username,
             msg
         })
-        //console.log(username)
     })
 
     socket.on('audio message', message => {
