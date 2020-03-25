@@ -78,11 +78,18 @@ io.on('connection',socket => {
         if (!to || to === '' || !filename ){
            return;
         }
-        map.get(to).emit('audio message',{
+        map.has(to) && map.get(to).emit('audio message',{
             name: username,
             filename: Base_Record_Url + filename,
             duration
         })
+    })
+
+    socket.on('rtc' ,message => {
+        const { data, to } = message
+        if ( !data ) { console.log(data);return; }
+        if ( !to ) { console.log(to);return; }
+        map.has(to) && map.get(to).emit('rtc', { data, to: username })
     })
 
     function updateUsername(){
@@ -92,6 +99,10 @@ io.on('connection',socket => {
 
 app.get('/',( _,res)=>{
     res.sendFile(__dirname+'/index.html')
+})
+
+app.get('/rtc',( _,res)=>{
+    res.sendFile(__dirname+'/rtctest.html')
 })
 
 server.listen(port,()=>{
